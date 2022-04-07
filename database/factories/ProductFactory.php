@@ -19,15 +19,9 @@ class ProductFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'image_url' =>$this->faker->imageUrl(),
+            'description' => $this->faker->sentence(),
+            'image_src' =>$this->faker->imageUrl(),
             'price' => $this->faker->numberBetween(5, 10)
         ];
-    }
-
-    public function configure()
-    {
-        return $this->afterCreating(function (Product $product) {
-            $product->ingredients()->factory(3)->create();
-        });
     }
 }
