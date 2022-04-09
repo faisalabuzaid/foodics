@@ -9,8 +9,7 @@ class IndexProducts extends Controller
 {
     public function __invoke(): IndexProductsResponse
     {
-        $products = Product::all();
-
+        $products = Product::with('productIngredients.ingredient')->get();
         return new IndexProductsResponse($products);
     }
 }

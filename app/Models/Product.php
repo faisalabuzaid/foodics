@@ -11,7 +11,7 @@ class Product extends Model
 {
     use HasFactory;
 
-    public function ingredients(): HasMany
+    public function productIngredients(): HasMany
     {
         return $this->hasMany(ProductIngredient::class);
     }
@@ -19,5 +19,18 @@ class Product extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+
+    public function totalIngredientsQuantity(): float
+    {
+        if ($this->ingredients) {
+            $total_quantity =0;
+            foreach ($this->ingredients as $ingredient) {
+                $total_quantity+= $ingredient->quantity;
+            }
+            return $total_quantity;
+        }
+        return 0;
     }
 }

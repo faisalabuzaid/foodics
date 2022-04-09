@@ -10,8 +10,15 @@ class ProductIngredient extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function ingredient(): BelongsTo
+    {
+        return $this->belongsTo(Ingredient::class);
     }
 }

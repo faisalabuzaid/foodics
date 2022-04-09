@@ -2,7 +2,6 @@
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" class="fixed z-10 inset-0 overflow-y-auto" @close="closeModal()">
             <div
-                v-if="product"
                 class="flex min-h-screen text-center md:block md:px-2 lg:px-4"
                 style="font-size: 0"
             >
@@ -35,6 +34,7 @@
                     leave-to="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
                 >
                     <div
+                        v-if="product"
                         class="flex text-base text-left transform transition w-full md:inline-block md:max-w-2xl md:px-4 md:my-8 md:align-middle lg:max-w-4xl"
                     >
                         <div
@@ -43,7 +43,7 @@
                             <button
                                 type="button"
                                 class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8"
-                                @click="closeModal()"
+                                @click="open = false"
                             >
                                 <span class="sr-only">Close</span>
                                 <XIcon class="h-6 w-6" aria-hidden="true" />
@@ -52,71 +52,67 @@
                             <div
                                 class="w-full grid grid-cols-1 gap-y-8 gap-x-6 items-start sm:grid-cols-12 lg:gap-x-8"
                             >
-                                <div class="sm:col-span-4 lg:col-span-5">
-                                    <div
-                                        class="aspect-w-1 aspect-h-1 rounded-lg bg-gray-100 overflow-hidden"
-                                    >
-                                        <img
-                                            :src="product.image_src"
-                                            class="object-center object-cover"
-                                        />
-                                    </div>
-                                    <p class="absolute top-4 left-4 text-center sm:static sm:mt-6">
-                                        <a
-                                            :href="product.href"
-                                            class="font-medium text-indigo-600 hover:text-indigo-500"
-                                        >View full details</a>
-                                    </p>
+                                <div
+                                    class="aspect-w-2 aspect-h-3 rounded-lg bg-gray-100 overflow-hidden sm:col-span-4 lg:col-span-5"
+                                >
+                                    <img
+                                        :src="product.image_src"
+                                        class="object-center object-cover"
+                                    />
                                 </div>
                                 <div class="sm:col-span-8 lg:col-span-7">
                                     <h2
                                         class="text-2xl font-extrabold text-gray-900 sm:pr-12"
                                     >{{ product.name }}</h2>
 
-                                    <section aria-labelledby="information-heading" class="mt-4">
+                                    <section aria-labelledby="information-heading" class="mt-2">
                                         <h3
                                             id="information-heading"
                                             class="sr-only"
                                         >Product information</h3>
 
-                                        <div class="flex items-center">
-                                            <p
-                                                class="text-lg text-gray-900 sm:text-xl"
-                                            >{{ product.price }}</p>
-                                        </div>
+                                        <p class="text-2xl text-gray-900">{{ product.price }}</p>
 
-                                        <div class="mt-6 flex items-center">
+                                        <!-- Reviews -->
+                                        <div class="mt-6">
+                                            <h4 class="sr-only">Reviews</h4>
+                                            <div class="flex items-center">
+                                                <p class="sr-only">{{ product.description }}</p>
+                                            </div>
                                             <p
-                                                class="ml-2 font-medium text-gray-500"
-                                            >{{ product.description }}</p>
+                                                v-for="ingredient in product.product_ingredients"
+                                                class="font-medium text-gray-700"
+                                            >{{ ingredient.ingredient.name }} {{ ingredient.quantity * 1000 }} g</p>
                                         </div>
                                     </section>
 
-                                    <section aria-labelledby="options-heading" class="mt-6">
-                                        <div>
-                                            <label
-                                                for="quantity-number"
-                                                class="block text-sm font-medium text-gray-700"
-                                            >Quantity</label>
-                                            <div class="mt-1 relative rounded-md shadow-sm">
-                                                <input
-                                                    type="number"
-                                                    v-model="quantity"
-                                                    class="block w-full border-2 border-black-300 placeholder-gray-300"
-                                                    name="quantity"
-                                                    placeholder="Enter Quantity"
-                                                    :autofocus="true"
-                                                    :required="true"
-                                                />
+                                    <section aria-labelledby="options-heading" class="mt-10">
+                                        <h3 id="options-heading" class="sr-only">Product options</h3>
+
+                                        <form onsubmit="return false" @submit="addItemToOrder()">
+                                            <!-- Sizes -->
+                                            <div class="mt-10">
+                                                <div class>
+                                                    <h4
+                                                        class="text-sm text-gray-900 font-medium"
+                                                    >Quantity</h4>
+                                                    <input
+                                                        :min="1"
+                                                        name="quantity"
+                                                        type="number"
+                                                        v-model="quantity"
+                                                        id="quantity"
+                                                        autocomplete="csc"
+                                                        class="block mt-3 w-1/4 px-6 py-2 border-gray-900 bg-gray-200 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="mt-6">
+
                                             <button
-                                                @click="addItemToOrder()"
                                                 type="submit"
-                                                class="w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
-                                            >Add to order</button>
-                                        </div>
+                                                class="mt-6 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                            >Add to bag</button>
+                                        </form>
                                     </section>
                                 </div>
                             </div>
@@ -133,31 +129,26 @@ import { ref } from 'vue'
 import {
     Dialog,
     DialogOverlay,
-    RadioGroup,
-    RadioGroupDescription,
-    RadioGroupLabel,
-    RadioGroupOption,
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue'
-import { ShieldCheckIcon, XIcon } from '@heroicons/vue/outline'
-import { CheckIcon, QuestionMarkCircleIcon, StarIcon } from '@heroicons/vue/solid'
+import { XIcon } from '@heroicons/vue/outline'
 
 const props = defineProps({
     product: Object,
     open: Boolean,
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'addToOrder']);
 const quantity = ref(0);
 const closeModal = () => {
     emit('close');
 }
 
 const addItemToOrder = () => {
-    console.log(props.product.id);
-    console.log(quantity.value);
-    emit('close', [props.product.id, quantity.value]);
+    emit('addToOrder', { product: props.product, quantity: quantity.value });
+    emit('close');
+
 }
 
 </script>

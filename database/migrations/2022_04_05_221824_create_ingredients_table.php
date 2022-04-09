@@ -16,8 +16,9 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('unit');
-            $table->decimal('incoming_quantity');
-            $table->decimal('available_quantity');
+            $table->float('incoming_quantity');
+            $table->float('outcoming_quantity')->nullable();
+            $table->timestamp('merchant_notified_at')->nullable();
             $table->timestamps();
         });
     }
